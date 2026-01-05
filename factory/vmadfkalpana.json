@@ -1,0 +1,9 @@
+{
+	"name": "vmadfkalpana",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "5c7503d0-9771-4fb1-92d8-806a5b9cbe5c",
+		"tenantId": "d054ec41-416e-448d-ac9a-2f4046c9b3b2"
+	}
+}

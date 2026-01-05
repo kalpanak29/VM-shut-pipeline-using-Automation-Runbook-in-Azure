@@ -1,0 +1,76 @@
+{
+	"name": "runbook_pipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "getVMStatus",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": "https://management.azure.com/subscriptions/113c5c83-9030-48a2-b8b8-e9587039c1f7/resourceGroups/KalpanaRG/providers/Microsoft.Compute/virtualMachines/VM1/instanceView?api-version=2024-11-01",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://management.azure.com/"
+					}
+				}
+			},
+			{
+				"name": "if VM stopped",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "getVMStatus",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(\n  activity('getVMStatus').output.statuses[1].code,\n  'PowerState/deallocated'\n)\n",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "send email",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"method": "POST",
+								"headers": {
+									"Content-Type": "application/json"
+								},
+								"url": "https://prod-11.northcentralus.logic.azure.com:443/workflows/d6eb869923aa4137baed65d0f7db8958/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=fF5o5iLTnMv6VCzzsoGUJ-m-oq43H6e5zE5xYLsoZBo",
+								"body": {
+									"value": "{\n  \"vmName\": \"VM1\",\n  \"status\": \"@{activity('getVMStatus').output.statuses[1].displayStatus}\",\n  \"message\": \"@{concat('VM ', 'VM1', ' has been stopped successfully')}\"\n}\n\n\n",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-01-05T09:47:20Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
