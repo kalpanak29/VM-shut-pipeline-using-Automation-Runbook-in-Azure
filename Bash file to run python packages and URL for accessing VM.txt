@@ -1,0 +1,29 @@
+# Variables
+ACCOUNT="kalpanarunbook"
+RG="KalpanaRG"
+
+# Function to import package
+import_pkg() {
+  az automation python3-package create \
+    --automation-account-name "$ACCOUNT" \
+    --resource-group "$RG" \
+    --name "$1" \
+    --content-link uri="$2"
+  echo "Importing $1... waiting 30s"
+  sleep 30
+}
+
+# Import packages in order
+import_pkg "typing-extensions" "https://files.pythonhosted.org/packages/py3/t/typing_extensions/typing_extensions-4.9.0-py3-none-any.whl"
+
+import_pkg "azure-core" "https://files.pythonhosted.org/packages/py3/a/azure-core/azure_core-1.30.0-py3-none-any.whl"
+
+import_pkg "azure-identity" "https://files.pythonhosted.org/packages/py3/a/azure-identity/azure_identity-1.15.0-py3-none-any.whl"
+
+import_pkg "azure-mgmt-core" "https://files.pythonhosted.org/packages/py3/a/azure-mgmt-core/azure_mgmt_core-1.4.0-py3-none-any.whl"
+
+import_pkg "azure-mgmt-compute" "https://files.pythonhosted.org/packages/py3/a/azure-mgmt-compute/azure_mgmt_compute-30.5.0-py3-none-any.whl"
+
+
+URL for accessing VM:
+https://management.azure.com/subscriptions/113c5c83-9030-48a2-b8b8-e9587039c1f7/resourceGroups/KalpanaRG/providers/Microsoft.Compute/virtualMachines/VM1/instanceView?api-version=2024-11-01
