@@ -1,0 +1,1 @@
+# VM-shut-pipeline-using-Automation-Runbook-in-Azure
